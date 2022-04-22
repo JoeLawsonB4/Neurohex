@@ -1,6 +1,9 @@
+from __future__ import absolute_import
 import numpy as np
 from inputFormat import *
 import sys
+import six
+from six.moves import range
 
 def get_empty(state):
 	count = 0
@@ -146,6 +149,6 @@ def score(state, color):
 			Q[cell] = min(1,max(-1,C1_prime/C2_prime - 1))
 
 	output = -1*np.ones((boardsize, boardsize))
-	for cell, value in Q.iteritems():
+	for cell, value in six.iteritems(Q):
 		output[cell[0]-padding, cell[1]-padding] = value
 	return output 

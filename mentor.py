@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+from __future__ import print_function
 import theano
 import time
 from lasagne.updates import rmsprop
@@ -7,25 +9,26 @@ import numpy.random as rand
 from inputFormat import *
 from network import network
 import matplotlib.pyplot as plt
-import cPickle
+import six.moves.cPickle
 import argparse
 import os
+from six.moves import range
 
 def save():
-	print "saving network..."
+	print("saving network...")
 	if args.save:
 		save_name = args.save
 	else:
 		save_name = "mentor_network.save"
 	if args.data:
-		f = file(args.data+"/"+save_name, 'wb')
+		f = open(args.data+"/"+save_name, 'wb')
 	else:
-		f = file(save_name, 'wb')
-	cPickle.dump(network, f, protocol=cPickle.HIGHEST_PROTOCOL)
+		f = open(save_name, 'wb')
+	six.moves.cPickle.dump(network, f, protocol=six.moves.cPickle.HIGHEST_PROTOCOL)
 	f.close()
 	if args.data:
-		f = file(args.data+"/costs.save","wb")
-		cPickle.dump(costs, f, protocol=cPickle.HIGHEST_PROTOCOL)
+		f = open(args.data+"/costs.save","wb")
+		six.moves.cPickle.dump(costs, f, protocol=six.moves.cPickle.HIGHEST_PROTOCOL)
 		f.close()
 
 
@@ -35,7 +38,7 @@ parser.add_argument("--save", "-s", type=str, help="Specify a file to save train
 parser.add_argument("--data", "-d", type =str, help="Specify a directory to save/load data for this run.")
 args = parser.parse_args()
 
-print "loading data... "
+print("loading data... ")
 datafile = open("data/scoredPositionsFull.npz", 'r')
 data = np.load(datafile)
 positions = data['positions']
@@ -47,8 +50,8 @@ if args.data:
 		costs = []
 	else:
 		if os.path.exists(args.data+"/costs.save"):
-			f = file(args.data+"/costs.save")
-			costs = cPickle.load(f)
+			f = open(args.data+"/costs.save")
+			costs = six.moves.cPickle.load(f)
 			f.close
 		else:
 			costs = []
@@ -71,14 +74,14 @@ numBatches = n_train/batch_size
 
 #if load parameter is passed load a network from a file
 if args.load:
-	print "loading model..."
-	f = file(args.load, 'rb')
-	network = cPickle.load(f)
+	print("loading model...")
+	f = open(args.load, 'rb')
+	network = six.moves.cPickle.load(f)
 	if(network.batch_size):
 		batch_size = network.batch_size
 	f.close()
 else:
-	print "building model..."
+	print("building model...")
 	#use batchsize none now so that we can easily use same network for picking single moves and evaluating batches
 	network = network(batch_size=None)
 
@@ -116,11 +119,11 @@ evaluate_model = theano.function(
 
 costs = []
 
-print "Training model on mentor set..."
-indices = range(n_train)
+print("Training model on mentor set...")
+indices = list(range(n_train))
 try:
 	for epoch in range(numEpochs):
-		print "epoch: ",epoch
+		print("epoch: ",epoch)
 		np.random.shuffle(indices)
 		cost_sum = 0
 		for batch in range(numBatches):
@@ -131,7 +134,7 @@ try:
 			run_time = time.clock()-t
 			cost_sum+=cost
 			iteration+=1
-			print "Cost: ",cost_sum/(batch+1), " Time per position: ", run_time/(batch_size)
+			print("Cost: ",cost_sum/(batch+1), " Time per position: ", run_time/(batch_size))
 		costs.append(cost_sum/(batch+1))
 		plt.plot(costs)
 		plt.ylabel('cost')
@@ -146,9 +149,9 @@ except KeyboardInterrupt:
 	exit(1)
 
 
-print "done training!"
+print("done training!")
 
 save()
 
-cPickle.dump(network, f, protocol=cPickle.HIGHEST_PROTOCOL)
+six.moves.cPickle.dump(network, f, protocol=six.moves.cPickle.HIGHEST_PROTOCOL)
 f.close()

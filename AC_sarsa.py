@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+from __future__ import print_function
 import theano
 from lasagne.updates import rmsprop
 from theano import tensor as T
@@ -6,61 +8,62 @@ import numpy.random as rand
 from inputFormat import *
 from network import network, policy_network
 import matplotlib.pyplot as plt
-import cPickle
+import six.moves.cPickle
 import argparse
 import time
 import os
+from six.moves import range
 
 def save():
-	print "saving Q-network..."
+	print("saving Q-network...")
 	save_name = "Q_network.save"
 	if args.data:
-		f = file(args.data+"/"+save_name, 'wb')
+		f = open(args.data+"/"+save_name, 'wb')
 	else:
-		f = file(save_name, 'wb')
-	cPickle.dump(network, f, protocol=cPickle.HIGHEST_PROTOCOL)
+		f = open(save_name, 'wb')
+	six.moves.cPickle.dump(network, f, protocol=six.moves.cPickle.HIGHEST_PROTOCOL)
 	f.close()
 
-	print "saving P-network..."
+	print("saving P-network...")
 	save_name = "P_network.save"
 	if args.data:
-		f = file(args.data+"/"+save_name, 'wb')
+		f = open(args.data+"/"+save_name, 'wb')
 	else:
-		f = file(save_name, 'wb')
-	cPickle.dump(policy_network, f, protocol=cPickle.HIGHEST_PROTOCOL)
+		f = open(save_name, 'wb')
+	six.moves.cPickle.dump(policy_network, f, protocol=six.moves.cPickle.HIGHEST_PROTOCOL)
 	f.close()
 	if args.data:
-		f = file(args.data+"/replay_mem.save", 'wb')
-		cPickle.dump(mem, f, protocol=cPickle.HIGHEST_PROTOCOL)
+		f = open(args.data+"/replay_mem.save", 'wb')
+		six.moves.cPickle.dump(mem, f, protocol=six.moves.cPickle.HIGHEST_PROTOCOL)
 		f.close()
-		f = file(args.data+"/costs.save","wb")
-		cPickle.dump(costs, f, protocol=cPickle.HIGHEST_PROTOCOL)
+		f = open(args.data+"/costs.save","wb")
+		six.moves.cPickle.dump(costs, f, protocol=six.moves.cPickle.HIGHEST_PROTOCOL)
 		f.close()
-		f = file(args.data+"/values.save","wb")
-		cPickle.dump(values, f, protocol=cPickle.HIGHEST_PROTOCOL)
+		f = open(args.data+"/values.save","wb")
+		six.moves.cPickle.dump(values, f, protocol=six.moves.cPickle.HIGHEST_PROTOCOL)
 		f.close()
 
 def snapshot():
 	if not args.data:
 		return
-	print "saving Q-network snapshot..."
+	print("saving Q-network snapshot...")
 	index = 0
 	save_name = args.data+"/Q_snapshot_"+str(index)+".save"
 	while os.path.exists(save_name):
 		index+=1
 		save_name = args.data+"/Q_snapshot_"+str(index)+".save"
-	f = file(save_name, 'wb')
-	cPickle.dump(network, f, protocol=cPickle.HIGHEST_PROTOCOL)
+	f = open(save_name, 'wb')
+	six.moves.cPickle.dump(network, f, protocol=six.moves.cPickle.HIGHEST_PROTOCOL)
 	f.close()
 
-	print "saving P-network snapshot..."
+	print("saving P-network snapshot...")
 	index = 0
 	save_name = args.data+"/P_snapshot_"+str(index)+".save"
 	while os.path.exists(save_name):
 		index+=1
 		save_name = args.data+"/P_snapshot_"+str(index)+".save"
-	f = file(save_name, 'wb')
-	cPickle.dump(network, f, protocol=cPickle.HIGHEST_PROTOCOL)
+	f = open(save_name, 'wb')
+	six.moves.cPickle.dump(network, f, protocol=six.moves.cPickle.HIGHEST_PROTOCOL)
 	f.close()
 
 def running_mean(x, N):
@@ -190,7 +193,7 @@ save_time = 30
 #save snapshot of network to unique file every x minutes during training
 snapshot_time = 240
 
-print "loading starting positions... "
+print("loading starting positions... ")
 datafile = open("data/scoredPositionsFull.npz", 'r')
 data = np.load(datafile)
 positions = data['positions']
@@ -214,22 +217,22 @@ if args.data:
 		values = []
 	else:
 		if os.path.exists(args.data+"/replay_mem.save"):
-			print "loading replay memory..."
-			f = file(args.data+"/replay_mem.save")
-			mem = cPickle.load(f)
+			print("loading replay memory...")
+			f = open(args.data+"/replay_mem.save")
+			mem = six.moves.cPickle.load(f)
 			f.close
 		else:
 			#replay memory from which updates are drawn
 			mem = replay_memory(replay_capacity)
 		if os.path.exists(args.data+"/costs.save"):
-			f = file(args.data+"/costs.save")
-			costs = cPickle.load(f)
+			f = open(args.data+"/costs.save")
+			costs = six.moves.cPickle.load(f)
 			f.close
 		else:
 			costs = []
 		if os.path.exists(args.data+"/values.save"):
-			f = file(args.data+"/values.save")
-			values = cPickle.load(f)
+			f = open(args.data+"/values.save")
+			values = six.moves.cPickle.load(f)
 			f.close
 		else:
 			values = []
@@ -244,31 +247,31 @@ batch_size = 64
 
 #if load parameter is passed load a network from a file
 if args.qnet:
-	print "loading Q-network..."
-	f = file(args.qnet, 'rb')
-	network = cPickle.load(f)
+	print("loading Q-network...")
+	f = open(args.qnet, 'rb')
+	network = six.moves.cPickle.load(f)
 	if(network.batch_size):
 		batch_size = network.batch_size
 	f.close()
 else:
-	print "building Q-network..."
+	print("building Q-network...")
 	#use batchsize none now so that we can easily use same network for picking single moves and evaluating batches
 	network = network(batch_size=None)
-	print "network size: "+str(network.mem_size.eval())
+	print("network size: "+str(network.mem_size.eval()))
 
 #if load parameter is passed load a network from a file
 if args.pnet:
-	print "loading P-network..."
-	f = file(args.pnet, 'rb')
-	policy_network = cPickle.load(f)
+	print("loading P-network...")
+	f = open(args.pnet, 'rb')
+	policy_network = six.moves.cPickle.load(f)
 	if(policy_network.batch_size):
 		batch_size = policy_network.batch_size
 	f.close()
 else:
-	print "building P-network..."
+	print("building P-network...")
 	#use batchsize none now so that we can easily use same network for picking single moves and evaluating batches
 	policy_network = policy_network(batch_size=None)
-	print "network size: "+str(policy_network.mem_size.eval())
+	print("network size: "+str(policy_network.mem_size.eval()))
 
 evaluate_model_single = theano.function(
 	[input_state],
@@ -330,7 +333,7 @@ train_P_model = theano.function(
 
 )
 
-print "Running episodes..."
+print("Running episodes...")
 epsilon_q = 0.1
 last_save = time.clock()
 last_snapshot = time.clock()
@@ -373,7 +376,7 @@ try:
 			mem.add_entry(state1, action, reward, state2)
 			if(mem.size > batch_size):
 				cost += QP_update()
-				print state_string(gameW)
+				print(state_string(gameW))
 			num_step += 1
 			if(time.clock()-last_save > 60*save_time):
 				save()
@@ -383,7 +386,7 @@ try:
 				snapshot()
 				last_snapshot = time.clock()
 		run_time = time.clock() - t
-		print "Episode", i, "complete, cost: ", 0 if num_step == 0 else cost/num_step, " Time per move: ", 0 if num_step == 0 else run_time/num_step, "Average value magnitude: ", 0 if num_step == 0 else value_sum/num_step
+		print("Episode", i, "complete, cost: ", 0 if num_step == 0 else cost/num_step, " Time per move: ", 0 if num_step == 0 else run_time/num_step, "Average value magnitude: ", 0 if num_step == 0 else value_sum/num_step)
 		costs.append(0 if num_step == 0 else cost/num_step)
 		values.append(0 if num_step == 0 else value_sum/num_step)
 

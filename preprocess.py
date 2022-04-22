@@ -1,5 +1,7 @@
+from __future__ import absolute_import
 import numpy as np
 from inputFormat import *
+from six.moves import range
 """
 raw_games.dat contains a list of moves corresponding to a 13x13 hex game on each line.
 This program converts this into an array of hex positions represented as a 4x17x17
@@ -16,7 +18,9 @@ black-to-play positions).
 def preprocess(filename, trim_final = True):
 	infile = open(filename, 'r')
 	positions = []
+	j = 0
 	for line in infile:
+		print(j)
 		gameW = new_game() #white plays first in this game
 		gameB = new_game() #equivalent game where black plays first
 		moves = line.split()
@@ -34,8 +38,14 @@ def preprocess(filename, trim_final = True):
 		positions_array = np.empty((num_positions,18,input_size,input_size), dtype=bool)
 		for i in range(num_positions):
 			positions_array[i]=positions[i]
+		if (j % 1000 == 0):
+			print("save")
+			np.savez("data/positions" + str(j), positions= positions)
+			positions_array = np.empty((num_positions,18,input_size,input_size), dtype=int)
+			positions = []
+		print(j)
+		j+=1
 	return positions_array
 
-positions = preprocess("data/raw_games.dat")
-savefile = open("data/scoredPositionsFull.npz", 'w')
-np.savez(savefile, positions=positions)
+positions = preprocess("data/mohex2Games.dat")
+np.savez("data/positionsFinal.npz", positions=positions)

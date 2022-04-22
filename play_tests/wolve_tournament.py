@@ -1,9 +1,12 @@
+from __future__ import absolute_import
+from __future__ import print_function
 import argparse
 from program import Program
 import threading
 import time
 from gamestate import gamestate
 import sys
+from six.moves import range
 
 class agent:
 	def __init__(self, exe):
@@ -43,7 +46,7 @@ def run_game(blackAgent, whiteAgent, boardsize, verbose = False):
 		game.place_black(move_to_cell(move))
 		whiteAgent.sendCommand("play black "+move)
 		if verbose:
-			print(blackAgent.name+" v.s. "+whiteAgent.name)
+			print((blackAgent.name+" v.s. "+whiteAgent.name))
 			print(game)
 		if(game.winner() != game.PLAYERS["none"]):
 			winner = game.winner()
@@ -57,7 +60,7 @@ def run_game(blackAgent, whiteAgent, boardsize, verbose = False):
 		game.place_white(move_to_cell(move))
 		blackAgent.sendCommand("play white "+move)
 		if verbose:
-			print(blackAgent.name+" v.s. "+whiteAgent.name)
+			print((blackAgent.name+" v.s. "+whiteAgent.name))
 			print(game)
 		if(game.winner() != game.PLAYERS["none"]):
 			winner = game.winner()
@@ -65,9 +68,9 @@ def run_game(blackAgent, whiteAgent, boardsize, verbose = False):
 		sys.stdout.flush()
 	winner_name = blackAgent.name if winner == game.PLAYERS["black"] else whiteAgent.name
 	loser_name =  whiteAgent.name if winner == game.PLAYERS["black"] else blackAgent.name
-	print("Game over, " + winner_name+ " ("+game.PLAYER_STR[winner]+") " + "wins against "+loser_name)
+	print(("Game over, " + winner_name+ " ("+game.PLAYER_STR[winner]+") " + "wins against "+loser_name))
 	print(game)
-	print(" ".join(moves))
+	print((" ".join(moves)))
 	return winner
 
 wolve_exe = "/cshome/kjyoung/Summer_2015/benzene-vanilla/src/wolve/wolve 2>/dev/null"
@@ -103,8 +106,8 @@ for game in range(num_games):
 	if(winner == gamestate.PLAYERS["black"]):
 		black_wins += 1
 
-print "win_rate as white: "+str(white_wins/float(num_games)*100)[0:5]+"%"
-print "win_rate as black: "+str(black_wins/float(num_games)*100)[0:5]+"%"
+print("win_rate as white: "+str(white_wins/float(num_games)*100)[0:5]+"%")
+print("win_rate as black: "+str(black_wins/float(num_games)*100)[0:5]+"%")
 
 
 

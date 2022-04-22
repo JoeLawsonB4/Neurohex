@@ -1,9 +1,10 @@
+from __future__ import absolute_import
 import theano
 from theano import tensor as T
 import numpy as np
 from inputFormat import *
 from layers import *
-import cPickle
+import six.moves.cPickle
 
 
 class network:

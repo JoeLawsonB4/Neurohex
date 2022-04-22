@@ -1,4 +1,7 @@
+from __future__ import absolute_import
+from __future__ import print_function
 import sys
+from six.moves import range
 sys.path.append("..")
 from inputFormat import state_string, new_game
 from resistance import score
@@ -18,10 +21,10 @@ start = time.time()
 for i in range(len(pos)):
 	s = score(pos[i],0)
 	if(np.min(np.select([s>-1],[s]))<0 and np.max(s)>0):
-		print s
-		print state_string(pos[i])
+		print(s)
+		print(state_string(pos[i]))
 	#print score(pos[i], 0)
-print "Computed ", len(pos), "positions in ", time.time() - start, "s"
+print("Computed ", len(pos), "positions in ", time.time() - start, "s")
 
-print state_string(pos[60])
-print score(pos[60], 0)
+print(state_string(pos[60]))
+print(score(pos[60], 0))

@@ -1,4 +1,6 @@
-import cPickle
+from __future__ import absolute_import
+from __future__ import print_function
+import six.moves.cPickle
 import argparse
 from inputFormat import *
 from network import network
@@ -13,14 +15,14 @@ parser.add_argument("--cpu", "-c", dest="cpu", action='store_const',
 					help="Convert network to run on a CPU.")
 args = parser.parse_args()
 
-print "loading model..."
-f = file(args.source, 'rb')
-old_network = cPickle.load(f)
+print("loading model...")
+f = open(args.source, 'rb')
+old_network = six.moves.cPickle.load(f)
 f.close()
 
 params = old_network.params
 if args.cpu:
-	print "converting gpu parameters..."
+	print("converting gpu parameters...")
 	new_params=[]
 	for param in params:
 		param = T._shared(param.get_value())
@@ -29,7 +31,7 @@ if args.cpu:
 
 new_network = network(batch_size=None, params = params)
 
-print "saving model..."
-f = file(args.dest, 'wb')
-cPickle.dump(new_network, f, protocol=cPickle.HIGHEST_PROTOCOL)
+print("saving model...")
+f = open(args.dest, 'wb')
+six.moves.cPickle.dump(new_network, f, protocol=six.moves.cPickle.HIGHEST_PROTOCOL)
 f.close()

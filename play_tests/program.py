@@ -2,6 +2,8 @@
 # Opens connection to GTP program. 
 #----------------------------------------------------------------------------
 
+from __future__ import absolute_import
+from __future__ import print_function
 import string, os, sys, subprocess, signal
 from subprocess import Popen, PIPE
 
@@ -17,11 +19,17 @@ class Program:
     def __init__(self, command, verbose):
         self._command = command
         self._verbose = verbose
+        
         if self._verbose:
-            print ("Creating program: "+command)
+            print(("Creating program: "+command))
         #self._stdin, self._stdout, self._stderr = subprocess.os.popen3(command)
-        p = Popen(command, shell = True, stdin=PIPE, stdout=PIPE, 
-            stderr=PIPE, close_fds=True, universal_newlines=True, preexec_fn=os.setsid)
+        print(command)
+        p = Popen(['py',command], shell = True, stdin=PIPE, stdout=PIPE, 
+            stderr=PIPE, close_fds=True, universal_newlines=True)
+        poll = p.poll()
+        if poll is None:
+            print("alive")
+        self.p = p
         self._pid = p.pid
         self._stdin, self._stdout, self._stderr = (p.stdin, p.stdout, p.stderr)
         self._isDead = 0
@@ -48,11 +56,14 @@ class Program:
     def sendCommand(self, cmd):
         try:
             if self._verbose:
-                print("< " + cmd)
-            self._stdin.write(cmd + "\n")
+                print(("< " + cmd))
+            self._stdin.write(cmd + "\r\n")
             self._stdin.flush()
             return self._getAnswer()
         except IOError:
+            poll = self.p.poll()
+            if poll is None:
+                print("alive")
             self._programDied()
 
     def _getAnswer(self):
@@ -61,7 +72,9 @@ class Program:
         numberLines = 0
         first = True
         while not done:
+            lines = self._stdout.readlines()
             line = self._stdout.readline()
+            print(lines)
             if line == "":
                 self._programDied()
             if self._verbose:
@@ -72,7 +85,7 @@ class Program:
                 else:
                     first = False
             numberLines += 1
-            done = (line == "\n")
+            done = (line == "\r\n")
             if not done:
                 answer += line
         if answer[0] != '=':

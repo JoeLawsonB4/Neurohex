@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import theano
 from theano import tensor as T
 from theano.tensor.nnet import conv

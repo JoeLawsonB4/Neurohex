@@ -1,9 +1,12 @@
+from __future__ import absolute_import
+from __future__ import print_function
 import argparse
 from program import Program
 import threading
 import time
 from gamestate import gamestate
 import sys
+from six.moves import range
 
 class agent:
 	def __init__(self, exe):
@@ -56,7 +59,7 @@ def run_game(blackAgent1, blackAgent2, whiteAgent1, whiteAgent2, num_moves, boar
 		whiteAgent1.sendCommand("play black "+move)
 		if(whiteAgent2): whiteAgent2.sendCommand("play black "+move)
 		if verbose:
-			print(blackAgent1.name+(" and "+blackAgent2.name if blackAgent2 else " " )+" v.s. "+whiteAgent1.name+(" and " + whiteAgent2.name if whiteAgent2 else " "))
+			print((blackAgent1.name+(" and "+blackAgent2.name if blackAgent2 else " " )+" v.s. "+whiteAgent1.name+(" and " + whiteAgent2.name if whiteAgent2 else " ")))
 			print(game)
 		if(game.winner() != game.PLAYERS["none"]):
 			winner = game.winner()
@@ -79,7 +82,7 @@ def run_game(blackAgent1, blackAgent2, whiteAgent1, whiteAgent2, num_moves, boar
 		blackAgent1.sendCommand("play white "+move)
 		if(blackAgent2): blackAgent2.sendCommand("play white "+move)
 		if verbose: 
-			print(blackAgent1.name+(" and "+blackAgent2.name if blackAgent2 else " " )+" v.s. "+whiteAgent1.name+(" and " + whiteAgent2.name if whiteAgent2 else " "))
+			print((blackAgent1.name+(" and "+blackAgent2.name if blackAgent2 else " " )+" v.s. "+whiteAgent1.name+(" and " + whiteAgent2.name if whiteAgent2 else " ")))
 			print(game)
 		if(game.winner() != game.PLAYERS["none"]):
 			winner = game.winner()
@@ -87,9 +90,9 @@ def run_game(blackAgent1, blackAgent2, whiteAgent1, whiteAgent2, num_moves, boar
 		sys.stdout.flush()
 	winner_name = blackAgent1.name+(" and "+blackAgent2.name if blackAgent2 else " ") if winner == game.PLAYERS["black"] else whiteAgent1.name+(" and "+whiteAgent2.name if whiteAgent2 else " ")
 	loser_name =  whiteAgent1.name+(" and "+whiteAgent2.name if whiteAgent2 else " ") if winner == game.PLAYERS["black"] else blackAgent1.name+(" and "+blackAgent2.name if blackAgent2 else " ")
-	print("Game over, " + winner_name+ " ("+game.PLAYER_STR[winner]+") " + "wins against "+loser_name)
+	print(("Game over, " + winner_name+ " ("+game.PLAYER_STR[winner]+") " + "wins against "+loser_name))
 	print(game)
-	print(" ".join(moves))
+	print((" ".join(moves)))
 	return winner
 
 mohex_exe = "/cshome/kjyoung/Summer_2015/benzene-vanilla/src/mohex/mohex 2>/dev/null"
@@ -127,8 +130,8 @@ for game in range(num_games):
 	if(winner == gamestate.PLAYERS["white"]):
 		black_wins += 1
 
-print "win_rate as white: "+str(white_wins/float(num_games)*100)[0:5]+"%"
-print "win_rate as black: "+str(black_wins/float(num_games)*100)[0:5]+"%"
+print("win_rate as white: "+str(white_wins/float(num_games)*100)[0:5]+"%")
+print("win_rate as black: "+str(black_wins/float(num_games)*100)[0:5]+"%")
 
 
 

@@ -1,5 +1,8 @@
+from __future__ import absolute_import
+from __future__ import print_function
 import numpy as np
 from unionfind import unionfind
+from six.moves import range
 
 class gamestate:
 	"""
@@ -49,7 +52,7 @@ class gamestate:
 		if(self.board[cell] == self.PLAYERS["none"]):
 			self.board[cell] = self.PLAYERS["white"]
 		else:
-			print self
+			print(self)
 			raise ValueError("Cell occupied")
 		#if the placed cell touches a white edge connect it appropriately
 		if(cell[0] == 0):
@@ -89,7 +92,7 @@ class gamestate:
 		"""
 		Set the player to take the next move.
 		"""
-		if(player in self.PLAYERS.values() and player !=self.PLAYERS["none"]):
+		if(player in list(self.PLAYERS.values()) and player !=self.PLAYERS["none"]):
 			self.toplay = player
 		else:
 			raise ValueError('Invalid turn: ' + str(player))

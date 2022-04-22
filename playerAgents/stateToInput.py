@@ -1,4 +1,6 @@
+from __future__ import absolute_import
 import sys
+from six.moves import range
 sys.path.append("..")
 import numpy as np
 from gamestate import gamestate
