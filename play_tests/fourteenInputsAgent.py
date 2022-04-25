@@ -58,13 +58,14 @@ class fourteenInputsAgent:
 		"""
 		state = self.input
 
-		inputState = state.transpose(1,2,0)
-		inputState = np.array([inputState])
-		inputState = np.delete(inputState,np.s_[2:6],3)
+		
 		#get equivalent white to play game if black to play
 		toplay = white if self.state.toplay == self.state.PLAYERS["white"] else black
 		if(toplay == black):
 			state = mirror_game(state)
+		inputState = state.transpose(1,2,0)
+		inputState = np.array([inputState])
+		inputState = np.delete(inputState,np.s_[2:6],3)
 		played = np.logical_or(state[white,padding:boardsize+padding,padding:boardsize+padding],\
 		state[black,padding:boardsize+padding,padding:boardsize+padding]).flatten()
 		self.scores = np.reshape(self.model.predict(inputState),(169))
@@ -83,7 +84,7 @@ class fourteenInputsAgent:
 		toplay = white if self.state.toplay == self.state.PLAYERS["white"] else black
 		if(toplay == black):
 			move = cell_m(move)
-		print(move)
+		
 		return move
 
 	def set_gamestate(self, state):

@@ -83,7 +83,7 @@ class sixInputsAgent:
 		toplay = white if self.state.toplay == self.state.PLAYERS["white"] else black
 		if(toplay == black):
 			move = cell_m(move)
-		print(move)
+		
 		return move
 
 	def set_gamestate(self, state):

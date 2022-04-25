@@ -7,6 +7,7 @@ from allInputsAgent import allInputsAgent
 from twoInputsAgent import twoInputsAgent
 from sixInputsAgent import sixInputsAgent
 from fourteenInputsAgent import fourteenInputsAgent
+import numpy as np
 
 
 class agent:
@@ -50,7 +51,6 @@ def run_game(blackAgent, whiteAgent, boardsize, verbose = False, opening = None)
 	whiteAgent.openingMove(move_to_cell(opening),1)
 	blackAgent.openingMove(move_to_cell(opening),1)
 	move = whiteAgent.best_move()
-    	
 	moves.append(cell_to_move(move))
 	game.place_white(move)
 	blackAgent.move(move,0)
@@ -87,9 +87,9 @@ def run_game(blackAgent, whiteAgent, boardsize, verbose = False, opening = None)
 			break
 	winner_name = blackAgent.name if winner == game.PLAYERS["black"] else whiteAgent.name
 	loser_name =  whiteAgent.name if winner == game.PLAYERS["black"] else blackAgent.name
-	print(("Game over, " + winner_name+ " ("+game.PLAYER_STR[winner]+") " + "wins against "+loser_name))
-	print(game)
-	print((" ".join(moves)))
+	# print(("Game over, " + winner_name+ " ("+game.PLAYER_STR[winner]+") " + "wins against "+loser_name))
+	# print(game)
+	# print((" ".join(moves)))
 	return winner
 
 
@@ -105,7 +105,7 @@ parser.add_argument("--all", "-a", dest="all_openings", action='store_const',
 args = parser.parse_args()
 
 print("Starting tournament...")
-num_games = 169
+num_games = 1
 if(args.time):
 	time = args.time
 else:
@@ -115,11 +115,10 @@ if(args.boardsize):
 else:
 	boardsize = 13
 agents = [allInputsAgent(), twoInputsAgent(), sixInputsAgent(), fourteenInputsAgent()]
-winArray = []
+winArray = np.empty((4,4), dtype= object)
 for i in range(4):
-	win = []
 	for j in range(4):
-		if(not i == j):	
+		if(not i == j):
 			agent= agents[i]
 			agent1 = agents[j]
 			player1_wins = 0
@@ -147,7 +146,8 @@ for i in range(4):
 							else:
 								player1_wins +=1
 								player1_white_wins +=1
-				num_games = num_games*boardsize*boardsize
+							print("player1_wins: " + str(player1_wins) +"	player2_wins: " + str(player2_wins))
+				print("final                            player1_wins: " + str(player1_wins) +"	player2_wins: " + str(player2_wins))
 			else:
 				for game in range(num_games):
 					winner = run_game(allInputs1, allInputs, boardsize, args.verbose)
@@ -157,8 +157,8 @@ for i in range(4):
 					if(winner == gamestate.PLAYERS["black"]):
 						black_wins += 1
 			wins = {"player1_wins": player1_wins, "player2_wins": player2_wins, "player1_black_wins":player1_black_wins, "player1_white_wins": player1_white_wins, "player2_black_wins": player2_black_wins, "player2_white_wins": player2_white_wins}
-			win[j] = wins
-	winArray[i] = win
+			winArray[i][j] = wins
+			winArray[j][i] = wins
 
 np.savez("wins.npz",wins = winArray)
 
